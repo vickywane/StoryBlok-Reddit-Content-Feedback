@@ -1,92 +1,71 @@
-import { getAllStoriesFromAllPages } from "@/app/api/lib/storyblok";
 import { useConfigStore } from "@/app/store/configStore";
-import { useState, useEffect, useCallback } from "react";
-import CustomSelect from "../Select";
+import { useState, useEffect } from "react";
 
 const Index = () => {
   const {
     isCredentialsSaved,
-    credentialsConfig,
-    setCurrentStep,
-    saveTargetStory,
+    fetchAnalysis,
+    analysisData,
+    isLoadingAnalysis,
+    analysisError,
+    createStoryblokDiscussion,
+    isCreatingDiscussion,
+    discussionError,
   } = useConfigStore();
 
-  const [stories, setStories] = useState<any[]>([]);
-  const [storiesLoading, setStoriesLoading] = useState(false);
-  const [selectedStory, setSelectedStory] = useState("");
-
-  const storyOptions = stories.map((story) => ({
-    value: story.id.toString(),
-    label: `${story.name} (${story.slug || "no-slug"})`,
-  }));
-
-  const handleStorySelection = (input: string) => {
-    saveTargetStory(input);
-    setSelectedStory(input);
-  };
-
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (isCredentialsSaved) {
+      fetchAnalysis();
+    }
+  }, [isCredentialsSaved, fetchAnalysis]);
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-2">Feedback</h2>
       <p className="text-gray-600 mb-6">Get feedback on your story.</p>
 
-      {/* TODO: Handle cases where user has no Story on StoryBlok (stories.length > 0 &&) */}
-
-      <div className="space-y-4">
-        {/* <CustomSelect
-          label="Suggest"
-          id="story-select"
-          placeholder={
-            storiesLoading ? "Loading stories..." : "Choose a story..."
-          }
-          value={selectedStory}
-          onValueChange={handleStorySelection}
-          options={storyOptions}
-        /> */}
-
-        <div className="flex justify-between items-center text-sm text-gray-600">
-          <span>
-            {storiesLoading
-              ? "Fetching stories..."
-              : `${stories.length} stories available`}
-          </span>
-          {/* <button
-            onClick={fetchStories}
-            disabled={storiesLoading}
-            className="text-blue-600 hover:text-blue-800 underline disabled:text-gray-400 disabled:no-underline"
-          >
-            {storiesLoading ? "Loading..." : "Refresh Stories"}
-          </button> */}
+      {/* Analysis Results */}
+      {isLoadingAnalysis && (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-gray-600">Loading analysis...</span>
         </div>
+      )}
 
-        {/* {selectedStory && (
-          <div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-blue-800 text-sm truncate">
-                  <b>Story:</b>{" "}
-                  {
-                    storyOptions.find(
-                      (option) => option.value === selectedStory
-                    )?.label
-                  }
-                </p>
-              </div>
-            </div>
+      {analysisError && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+          <h3 className="text-red-800 font-medium">Analysis Error</h3>
+          <p className="text-red-600">{analysisError}</p>
+        </div>
+      )}
 
-            <div className="w-full">
-              <button
-                onClick={() => setCurrentStep(3)}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded transition-colors"
-              >
-                Generate Feedback
-              </button>
-            </div>
+      {discussionError && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+          <h3 className="text-red-800 font-medium">Discussion Error</h3>
+          <p className="text-red-600">{discussionError}</p>
+        </div>
+      )}
+
+      {analysisData && !isLoadingAnalysis && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Analysis Results
+          </h3>
+          <div className="bg-gray-50 rounded-lg p-4 overflow-auto">
+            <pre className="text-sm text-gray-800 whitespace-pre-wrap">
+              {JSON.stringify(analysisData, null, 2)}
+            </pre>
           </div>
-        )} */}
-      </div>
+        </div>
+      )}
+
+      <button
+        onClick={createStoryblokDiscussion}
+        disabled={isCreatingDiscussion || !analysisData}
+        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm py-2 px-4 rounded transition-colors"
+      >
+        {isCreatingDiscussion ? "Adding Feedback..." : "Add Feedback To StoryBlok Story"}
+      </button>
     </div>
   );
 };

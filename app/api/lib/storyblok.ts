@@ -41,7 +41,7 @@ export async function getAllStories(
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `${token}`,
+      Authorization: `${token}`,
     },
   });
 
@@ -88,4 +88,90 @@ export async function getAllStoriesFromAllPages(token: string): Promise<any[]> {
   }
 
   return allStories;
+}
+
+interface DiscussionPayload {
+  spaceId: string;
+  storyId: string;
+  oauthToken: string;
+  subject: string;
+  message: string;
+  blockId: string;
+}
+
+export async function createDiscussion({
+  spaceId,
+  storyId,
+  oauthToken,
+  subject,
+  message,
+  blockId,
+}: DiscussionPayload): Promise<any> {
+  const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories/${storyId}/discussions`;
+
+  const payload = JSON.stringify({
+    discussion: {
+      comment: {
+        message_json: [
+          {
+            type: "text",
+            text: message,
+          },
+        ],
+      },
+      block_uid: blockId,
+      title: subject,
+      lang: "default",
+    },
+  });
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: oauthToken,
+    },
+    body: payload,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to create discussion: ${response.status} ${response.statusText} - ${errorText}`
+    );
+  }
+
+  return await response.json();
+}
+
+export async function createComment(
+  spaceId: string,
+  storyId: string,
+  discussionId: string,
+  oauthToken: string,
+  message: string
+): Promise<any> {
+  const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories/${storyId}/discussions/${discussionId}/discussion_comments`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: oauthToken,
+    },
+    body: JSON.stringify({
+      discussion_comment: {
+        message,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to create comment: ${response.status} ${response.statusText} - ${errorText}`
+    );
+  }
+
+  return await response.json();
 }

@@ -6,12 +6,13 @@ import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
-// Define your Zod schema for structured output
 const ResponseSchema = z.object({
-  subreddits: z.array(z.object({
-    name: z.string(),
-    summary: z.string(),
-  })),
+  subreddits: z.array(
+    z.object({
+      name: z.string(),
+      summary: z.string(),
+    })
+  ),
 });
 
 export async function GET(request: Request) {
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
     });
 
     const { object } = await generateObject({
-      model: openai('gpt-4o'),
+      model: openai("gpt-4o"),
       schema: ResponseSchema,
       prompt: `
         You are an experienced reddit user. 
@@ -54,9 +55,7 @@ export async function GET(request: Request) {
       `,
     });
 
-    console.log("REDDIT SUGGESTIONS =>", object);
-
-    return Response.json({ data: object });
+    return Response.json({ data: { ...object, plain_text: extractedData } });
   } catch (error) {
     console.error("Failed to fetch posts:", error);
 
