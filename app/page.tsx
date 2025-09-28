@@ -77,7 +77,7 @@ export default function Page() {
               <div className="text-sm text-gray-500">
                 View MVP source code on {" "}
                 <a
-                  href="https://storyblok-code-coffee.devpost.com/"
+                  href="https://github.com/vickywane/StoryBlok-Reddit-Content-Feedback"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:text-indigo-800 underline"
