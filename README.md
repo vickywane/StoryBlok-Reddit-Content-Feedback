@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StoryBlok Reddit Content Feedback
 
-## Getting Started
+> An AI-powered tool for content feedback enriched with insights from Reddit discussions. Analyses discussions in subreddits to extract SEO keywords,  emerging trends, and sentiment useful for impact.
 
-First, run the development server:
+## Inspiration 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+> This project is currently being built during the (Storyblok x Code and Coffee Hackathon 2025)[https://storyblok-code-coffee.devpost.com/] event.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+While working with content editors, I’ve observed that they often turn to Reddit discussions to gain authentic insights into industry challenges, user pain points, and product experiences. Conversational AI models can play a valuable role here by aggregating large volumes of discussions and analyzing them to extract actionable insights such as SEO keywords, emerging trends, and sentiment.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## User flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Configure StoryBlok and OpenAI credentials.
+- Read a StoryBlok story 
+- Extract plain text from the story object and recommend relevant subbreddits to post the story or get usefull insights.
+- Sentiment analysis against the story based on crawled description from the relevant subbreddits.
+- Create a discussion and comment within the story.
 
-## Learn More
+<img alt="user flow" style="height: auto; width: 100%; object-fit: contain;" src="./public/flow.png" />
 
-To learn more about Next.js, take a look at the following resources:
+## Technologies
+- StoryBlok CMS Editor
+- StoryBlok Management API
+- OpenAI 
+- React / Next.js / Next.js Route Handlers for edge functions. 
+- Vercel AI 
+- Reddit
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Screenshots
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Todo
 
-## Deploy on Vercel
+- [ ] Implement user authentication. 
+- [ ] Support persisting of application credentials based on user preference.
+- [ ] Introduce sufficient E2E and Unit tests. 
+- [ ] Build simple landing page or write blog post detailing the tool features. 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
+Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How can I thank you?
+Why not star the github repo? I'd love the attention! Why not share the link for this repository on Twitter or HackerNews? Spread the word!
+
+Don't forget to follow and connect with me on [Twitter](https://x.com/iamnwani) and [Linkedln](https://www.linkedin.com/in/victory-nwani/)!

@@ -1,6 +1,5 @@
 import {
   createDiscussion,
-  createComment,
   getStoryContent,
 } from "../lib/storyblok";
 

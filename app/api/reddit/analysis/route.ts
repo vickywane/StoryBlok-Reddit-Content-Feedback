@@ -1,37 +1,61 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { generateObject } from "ai";
+import { generateObject, generateText, stepCountIs, tool } from "ai";
 import fs from "fs/promises";
 import path from "path";
 import { z } from "zod";
+import { getPostComments, getSubredditPosts } from "../../lib/reddit";
+import { transformPosts } from "../../lib/transformers";
 
 export const dynamic = "force-dynamic";
 
-const AnalysisSchema = z.object({
-  missing_data_points: z.array(z.string()),
-  sentiment_analysis: z.object({
-    overall_sentiment: z.enum(["positive", "negative", "neutral"]),
-    confidence_score: z.number().min(0).max(1),
-    key_themes: z.array(z.string()),
-    emotional_indicators: z.array(z.string()),
-  }),
-  recommendations: z.array(z.string()),
-});
+// const AnalysisSchema = z.object({
+//   missing_data_points: z.array(z.string()),
+//   sentiment_analysis: z.object({
+//     overall_sentiment: z.enum(["positive", "negative", "neutral"]),
+//     confidence_score: z.number().min(0).max(1),
+//     key_themes: z.array(z.string()),
+//     emotional_indicators: z.array(z.string()),
+//   }),
+//   recommendations: z.array(z.string()),
+// });
 
-async function readBasketballData() {
-  try {
-    const filePath = path.join(
-      process.cwd(),
-      "app/api/reddit/analysis/r_basketball.json"
-    );
-    const fileContent = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(fileContent);
-  } catch (error) {
-    console.error("Error reading r_basketball.json:", error);
-    return null;
-  }
-}
+// async function readBasketballData() {
+//   try {
+//     const filePath = path.join(
+//       process.cwd(),
+//       "app/api/reddit/analysis/r_basketball.json"
+//     );
+//     const fileContent = await fs.readFile(filePath, "utf-8");
+//     return JSON.parse(fileContent);
+//   } catch (error) {
+//     console.error("Error reading r_basketball.json:", error);
+//     return null;
+//   }
+// }
 
-// TODO: use openai tools to fetch content from reddit on-demand when the model needs it. 
+// const tools = [
+//   {
+//     type: "function",
+//     name: "get_reddit_data",
+//     description: "Get data from a specific subreddit.",
+//     parameters: {
+//       type: "object",
+//       properties: {
+//         subreddit: {
+//           type: "string",
+//           description: "The name of the subreddit to fetch data from.",
+//         },
+//       },
+//       required: ["subreddit"],
+//     },
+//   },
+// ];
+
+// function get_reddit_data(subreddit: string) {}
+
+// web search tools
+
+// TODO: use openai tools to fetch content from reddit on-demand when the model needs it.
 
 export async function GET(request: Request) {
   try {
@@ -49,15 +73,19 @@ export async function GET(request: Request) {
       });
     }
 
-    const basketballData = await readBasketballData();
+    // const basketballData = await readBasketballData();
 
     const openai = createOpenAI({
       apiKey: openaiApiKey,
     });
 
-    const { object } = await generateObject({
+    const { content, toolCalls, text, toolResults } = await generateText({
       model: openai("gpt-5-nano"),
-      schema: AnalysisSchema,
+      // schema: AnalysisSchema,
+      system: `
+        Get content from the following subreddit: ${subreddit} ( if r/ in name is missing, add it ) and try to find relevant data points from it when answering questions.
+        Return a summary of your analysis using the tool result when done and limit to 200 words.
+      `,
       prompt: `
         You are an expert data analyst and content researcher.
         
@@ -67,12 +95,42 @@ export async function GET(request: Request) {
         3. Provide recommendations based on your analysis in richtext format
         
         Story Content: ${extractedContent}
-        
-        Provide a structured analysis with missing data points, sentiment analysis, and actionable recommendations.
       `,
+      stopWhen: stepCountIs(4),
+      tools: {
+        get_reddit_data: tool({
+          type: "function",
+          description: "Gets data from a specific subreddit.",
+          inputSchema: z.object({
+            subbredits: z.string(),
+          }),
+          execute: async ({ subbredits }) => {
+            const posts = await getSubredditPosts(subbredits);
+
+            if (!posts.length) {
+              console.error(`No posts found in r/${subbredits}`);
+              return;
+            }
+
+            const transformed = transformPosts(posts);
+
+            // const insertedComments = await Promise.all(
+            //   transformed.map(async (post) => ({
+            //     ...post,
+            //     comments: await getPostComments(post.id),
+            //   }))
+            // );
+
+            // console.log(`Inserted:`, transformed);
+            // return insertedComments;
+
+            return JSON.stringify({ transformed });
+          },
+        }),
+      },
     });
 
-    return Response.json({ data: object });
+    return Response.json({ data: text });
   } catch (error) {
     console.error("Failed to fetch posts:", error);
     return Response.json({ status: 500, message: "Internal Server Error" });

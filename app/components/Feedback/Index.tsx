@@ -11,6 +11,7 @@ const Index = () => {
     createStoryblokDiscussion,
     isCreatingDiscussion,
     discussionError,
+    setCurrentStep,
   } = useConfigStore();
 
   useEffect(() => {
@@ -18,6 +19,13 @@ const Index = () => {
       fetchAnalysis();
     }
   }, [isCredentialsSaved, fetchAnalysis]);
+
+  const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
+
+  const handleFeedbackSubmit = () => {
+    createStoryblokDiscussion();
+    setIsFeedbackSubmitted(true);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -59,13 +67,25 @@ const Index = () => {
         </div>
       )}
 
-      <button
-        onClick={createStoryblokDiscussion}
-        disabled={isCreatingDiscussion || !analysisData}
-        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm py-2 px-4 rounded transition-colors"
-      >
-        {isCreatingDiscussion ? "Adding Feedback..." : "Add Feedback To StoryBlok Story"}
-      </button>
+      {isFeedbackSubmitted ? (
+        <button
+          onClick={() => setCurrentStep(2)}
+          disabled={isCreatingDiscussion || !analysisData}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm py-2 px-4 rounded transition-colors"
+        >
+          Generate Feedback Again
+        </button>
+      ) : (
+        <button
+          onClick={handleFeedbackSubmit}
+          disabled={isCreatingDiscussion || !analysisData}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm py-2 px-4 rounded transition-colors"
+        >
+          {isCreatingDiscussion
+            ? "Adding Feedback..."
+            : "Add Feedback To StoryBlok Story"}
+        </button>
+      )}
     </div>
   );
 };

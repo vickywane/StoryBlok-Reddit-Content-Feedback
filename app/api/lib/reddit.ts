@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import { transformArrayComments, transformComments } from "./transformers";
 import snoowrap from "snoowrap";
 import { filterCommentData } from "./filters";
 
@@ -23,82 +21,7 @@ interface RedditComment {
   id: string;
   replies?: RedditCommentsResponse;
 }
-
-interface RedditData {
-  subreddit: string;
-  fetchedAt: string;
-  posts: PostWithComments[];
-}
-
-// interface RedditResponse {
-//   data: {
-//     children: Array<{
-//       data: RedditPost;
-//     }>;
-//   };
-// }
-
-// async function getSubredditPosts(
-//   subreddit: string,
-//   limit: number = 10
-// ): Promise<RedditPost[]> {
-//   try {
-//     const response = await axios.get<RedditResponse>(
-//       `https://www.reddit.com/r/${subreddit}/hot.json?limit=${limit}`,
-//       {
-//         headers: {
-//           "User-Agent": "my-app:v1.0.0 (by u/key_Tumbleweed8899)",
-//         },
-//       }
-//     );
-
-//     return response.data.data.children.map((child) => child.data);
-//   } catch (error) {
-//     console.error("Error fetching Reddit posts:", error);
-//     throw error;
-//   }
-// }
-
-// async function getPostComments(
-//   subreddit: string,
-//   postId: string,
-//   limit: number = 5
-// ): Promise<RedditComment[]> {
-//   try {
-//     const { data: comments, status } = await axios.get<
-//       [any, RedditCommentsResponse]
-//     >(
-//       `https://www.reddit.com/r/${subreddit}/comments/${postId}.json?limit=${limit}`,
-//       {
-//         headers: {
-//           "User-Agent": "my-app:v1.0.0 (by u/key_Tumbleweed8899)",
-//         },
-//       }
-//     );
-
-//     // @ts-ignore
-//     const transformedResponse = transformComments(comments.data.children);
-
-//     return transformedResponse;
-//   } catch (error) {
-//     console.error(`Error fetching comments for post ${postId}:`, error);
-//     return [];
-//   }
-// }
-
-// async function saveToJsonFile(
-//   data: RedditData,
-//   filename: string
-// ): Promise<void> {
-//   try {
-//     const jsonData = JSON.stringify(data, null, 2);
-//     await fs.writeFile(filename, jsonData, "utf8");
-//     console.log(`\nData saved to ${filename}`);
-//   } catch (error) {
-//     console.error("Error saving to JSON file:", error);
-//   }
-// }
-
+ 
 interface RedditCommentsResponse {
   data: {
     children: Array<{
@@ -106,11 +29,6 @@ interface RedditCommentsResponse {
       data: RedditComment;
     }>;
   };
-}
-
-interface PostWithComments {
-  post: RedditPost;
-  comments: RedditComment[];
 }
 
 interface RedditResponse {
@@ -127,7 +45,7 @@ export async function getSubredditPosts(
 ): Promise<RedditPost[]> {
   try {
     const response = await fetch(
-      `https://www.reddit.com/r/${subreddit}/hot.json?limit=${limit}`,
+      `https://www.reddit.com/${subreddit}/hot.json?limit=${limit}`,
       {
         headers: {
           "User-Agent": "my-app:v1.0.0 (by u/key_Tumbleweed8899)",
@@ -140,7 +58,9 @@ export async function getSubredditPosts(
     }
 
     const data: RedditResponse = await response.json();
+
     return data.data.children.map((child) => child.data);
+    // return transformPosts(data.data.children);
   } catch (error) {
     console.error("Error fetching Reddit posts:", error);
     throw error;
@@ -149,16 +69,23 @@ export async function getSubredditPosts(
 
 // TODO: review the ETL of data from reddit comments here. Might be loosing some data
 export async function getPostComments(
-  subreddit: string,
-  postId: string,
-  limit: number = 100
+  postId: string
 ): Promise<RedditComment[]> {
   try {
+    if (
+      !process.env.REDDIT_CLIENT_ID ||
+      !process.env.REDDIT_CLIENT_SECRET ||
+      !process.env.REDDIT_REFRESH_TOKEN ||
+      !process.env.USER_AGENT
+    ) {
+      throw new Error("Missing Reddit API credentials");
+    }
+
     const reddit = new snoowrap({
-      userAgent: "my-app:v1.0.0 (by u/key_Tumbleweed8899)",
-      clientId: "GKwVq6piNPNsWM2IXsg4jA",
-      clientSecret: "2sCVydRbQ4ot9y7yfQjaGg7zTSwNLA",
-      refreshToken: "583673778351-JBGCn_BsQiKzofJWf3JrBy8lAenqnA",
+      userAgent: process.env.USER_AGENT,
+      clientId: process.env.REDDIT_CLIENT_ID,
+      clientSecret: process.env.REDDIT_CLIENT_SECRET,
+      refreshToken: process.env.REDDIT_REFRESH_TOKEN,
     });
 
     // @ts-ignore
@@ -184,18 +111,5 @@ export async function getPostComments(
   } catch (error) {
     console.error(`Error fetching comments for post ${postId}:`, error);
     return [];
-  }
-}
-
-export async function saveToJsonFile(
-  data: RedditData,
-  filename: string
-): Promise<void> {
-  try {
-    const jsonData = JSON.stringify(data, null, 2);
-    await fs.writeFile(filename, jsonData, "utf8");
-    console.log(`\nData saved to ${filename}`);
-  } catch (error) {
-    console.error("Error saving to JSON file:", error);
   }
 }

@@ -36,21 +36,14 @@ export const transformPosts = (posts: any) => {
   // @ts-ignore
   return posts.map((post) => ({
     id: post.id,
+    subredditNamePrefixed: post.subreddit_name_prefixed,
     title: post.title,
-    author: post.author,
-    score: post.score,
-    submitTextHtml: post.submit_text_html,
-    displayName: post.display_name,
-    headerImg: post.header_img,
+    authorFullname: post.author_fullname,
     name: post.name,
-    publicDescription: post.public_description,
-    communityIcon: post.community_icon,
-    submitText: post.submit_text,
-    descriptionHtml: post.description_html,
-    headerTitle: post.header_title,
-    publicDescriptionHtml: post.public_description_html,
-    suggestedCommentSort: post.suggested_comment_sort,
-    subredditType: post.subreddit_type,
+    linkFlairText: post.link_flair_text,
+    permalink: post.permalink,
     url: post.url,
+    createdUtc: post.created_utc,
+    subredditSubscribers: post.subreddit_subscribers,
   }));
 };

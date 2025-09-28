@@ -126,10 +126,9 @@ export const useConfigStore = create<ConfigState>()((set, get) => ({
       toast.success(`Found ${suggestions.length} Reddit suggestions!`);
     } catch (error) {
       console.error("Failed to fetch Reddit suggestions:", error);
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to fetch suggestions";
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch suggestions";
+
       set({
         isLoadingSuggestions: false,
         suggestionsError: errorMessage,
@@ -156,7 +155,7 @@ export const useConfigStore = create<ConfigState>()((set, get) => ({
       const params = new URLSearchParams({
         extractedContent: plainStory,
         openaiApiKey,
-        subreddit: redditSuggestions[0],
+        subreddit: redditSuggestions.join(","),
       });
 
       const response = await fetch(`/api/reddit/analysis?${params.toString()}`);
@@ -173,11 +172,12 @@ export const useConfigStore = create<ConfigState>()((set, get) => ({
         analysisError: null,
       });
 
-      toast.success("Analysis completed successfully!");
+      return toast.success("Analysis completed successfully!");
     } catch (error) {
       console.error("Failed to fetch analysis:", error);
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch analysis";
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch analysis";
+
       set({
         isLoadingAnalysis: false,
         analysisError: errorMessage,
@@ -261,10 +261,9 @@ export const useConfigStore = create<ConfigState>()((set, get) => ({
       toast.success("Feedback successfully added to Storyblok story!");
     } catch (error) {
       console.error("Failed to create Storyblok discussion:", error);
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to create discussion";
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create discussion";
+
       set({
         isCreatingDiscussion: false,
         discussionError: errorMessage,
