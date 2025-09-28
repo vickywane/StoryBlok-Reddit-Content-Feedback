@@ -88,7 +88,7 @@ export async function getPostComments(
       refreshToken: process.env.REDDIT_REFRESH_TOKEN,
     });
 
-    // @ts-ignore
+    // @ts-expect-error fetch posts
     const post = await reddit
       .getSubmission(postId)
       .expandReplies({ limit: Infinity, depth: Infinity });

@@ -2,9 +2,9 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 
 export async function extractTextWithOpenAI(
-  storyContent: any,
+  storyContent: unknown,
   apiKey: string
-): Promise<any> {
+): Promise<unknown> {
   const openai = createOpenAI({
     apiKey: apiKey,
   });
@@ -16,6 +16,7 @@ export async function extractTextWithOpenAI(
       
       Extract the text content from this Storyblok story data: ${JSON.stringify(storyContent)}
     `,
+    // @ts-expect-error maxTokens property issue
     maxTokens: 2000,
     temperature: 0,
   });

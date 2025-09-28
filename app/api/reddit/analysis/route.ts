@@ -1,9 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { generateObject, generateText, stepCountIs, tool } from "ai";
-import fs from "fs/promises";
-import path from "path";
+import { generateText, stepCountIs, tool } from "ai";
 import { z } from "zod";
-import { getPostComments, getSubredditPosts } from "../../lib/reddit";
+import { getSubredditPosts } from "../../lib/reddit";
 import { transformPosts } from "../../lib/transformers";
 
 export const dynamic = "force-dynamic";
@@ -18,44 +16,6 @@ export const dynamic = "force-dynamic";
 //   }),
 //   recommendations: z.array(z.string()),
 // });
-
-// async function readBasketballData() {
-//   try {
-//     const filePath = path.join(
-//       process.cwd(),
-//       "app/api/reddit/analysis/r_basketball.json"
-//     );
-//     const fileContent = await fs.readFile(filePath, "utf-8");
-//     return JSON.parse(fileContent);
-//   } catch (error) {
-//     console.error("Error reading r_basketball.json:", error);
-//     return null;
-//   }
-// }
-
-// const tools = [
-//   {
-//     type: "function",
-//     name: "get_reddit_data",
-//     description: "Get data from a specific subreddit.",
-//     parameters: {
-//       type: "object",
-//       properties: {
-//         subreddit: {
-//           type: "string",
-//           description: "The name of the subreddit to fetch data from.",
-//         },
-//       },
-//       required: ["subreddit"],
-//     },
-//   },
-// ];
-
-// function get_reddit_data(subreddit: string) {}
-
-// web search tools
-
-// TODO: use openai tools to fetch content from reddit on-demand when the model needs it.
 
 export async function GET(request: Request) {
   try {
@@ -73,13 +33,11 @@ export async function GET(request: Request) {
       });
     }
 
-    // const basketballData = await readBasketballData();
-
     const openai = createOpenAI({
       apiKey: openaiApiKey,
     });
 
-    const { content, toolCalls, text, toolResults } = await generateText({
+    const { text } = await generateText({
       model: openai("gpt-5-nano"),
       // schema: AnalysisSchema,
       system: `
@@ -113,16 +71,6 @@ export async function GET(request: Request) {
             }
 
             const transformed = transformPosts(posts);
-
-            // const insertedComments = await Promise.all(
-            //   transformed.map(async (post) => ({
-            //     ...post,
-            //     comments: await getPostComments(post.id),
-            //   }))
-            // );
-
-            // console.log(`Inserted:`, transformed);
-            // return insertedComments;
 
             return JSON.stringify({ transformed });
           },

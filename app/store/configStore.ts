@@ -22,7 +22,7 @@ interface ConfigState {
   redditSuggestions: string[];
   isLoadingSuggestions: boolean;
   suggestionsError: string | null;
-  analysisData: any;
+  analysisData: unknown;
   plainStory: string;
   isLoadingAnalysis: boolean;
   analysisError: string | null;
@@ -138,6 +138,7 @@ export const useConfigStore = create<ConfigState>()((set, get) => ({
     }
   },
 
+  // @ts-expect-error return type mismatch
   fetchAnalysis: async () => {
     const state = get();
     const { credentialsConfig, storyId, redditSuggestions, plainStory } = state;

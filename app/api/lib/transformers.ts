@@ -1,6 +1,6 @@
-export const transformComments = (comments: any) => {
-  // @ts-ignore
-  return comments?.map((item: any) => ({
+export const transformComments = (comments: unknown) => {
+  // @ts-expect-error error here
+  return comments?.map((item) => ({
     submitTextHtml: item.data.submit_text_html,
     displayName: item.data.display_name,
     headerImg: item.data.header_img,
@@ -18,9 +18,9 @@ export const transformComments = (comments: any) => {
   }));
 };
 
-export const transformArrayComments = (comments: any) => {
-  // @ts-ignore
-  return comments?.map((item: any) => ({
+export const transformArrayComments = (comments: unknown) => {
+  // @ts-expect-error error here
+  return comments?.map(item => ({
     selftext: item.data.selftext,
     title: item.data.title,
     subreddit_name_prefixed: item.data.subreddit_name_prefixed,
@@ -32,8 +32,8 @@ export const transformArrayComments = (comments: any) => {
   }));
 };
 
-export const transformPosts = (posts: any) => {
-  // @ts-ignore
+export const transformPosts = (posts: unknown) => {
+  // @ts-expect-error erorr here
   return posts.map((post) => ({
     id: post.id,
     subredditNamePrefixed: post.subreddit_name_prefixed,

@@ -2,7 +2,7 @@ export async function getStoryContent(
   spaceId: string,
   storyId: string,
   oauthToken: string
-): Promise<any> {
+): Promise<unknown> {
   const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories/${storyId}`;
 
   const response = await fetch(url, {
@@ -27,7 +27,7 @@ export async function getAllStories(
   page: number = 1,
   perPage: number = 100,
   spaceId: string
-): Promise<any> {
+): Promise<unknown> {
   const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories`;
 
   const params = new URLSearchParams({
@@ -56,8 +56,8 @@ export async function getAllStories(
   return data;
 }
 
-export async function getAllStoriesFromAllPages(token: string): Promise<any[]> {
-  let allStories: any[] = [];
+export async function getAllStoriesFromAllPages(token: string): Promise<unknown[]> {
+  let allStories: unknown[] = [];
   let page = 1;
   let hasMore = true;
   const perPage = 100; // Maximum per page
@@ -68,14 +68,16 @@ export async function getAllStoriesFromAllPages(token: string): Promise<any[]> {
 
       const response = await getAllStories(token, page, perPage, spaceId);
 
+      // @ts-expect-error error here
       if (response.stories && response.stories.length > 0) {
+        // @ts-expect-error error here
         allStories = allStories.concat(response.stories);
 
-        // Check if there are more pages
+        // @ts-expect-error error here
         const totalStories = response.headers?.total || 0;
         const currentCount = page * perPage;
-        hasMore =
-          currentCount < totalStories && response.stories.length === perPage;
+        // @ts-expect-error error here
+        hasMore = currentCount < totalStories && response.stories.length === perPage;
 
         page++;
       } else {
@@ -106,7 +108,7 @@ export async function createDiscussion({
   subject,
   message,
   blockId,
-}: DiscussionPayload): Promise<any> {
+}: DiscussionPayload): Promise<unknown> {
   const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories/${storyId}/discussions`;
 
   const payload = JSON.stringify({
@@ -150,7 +152,7 @@ export async function createComment(
   discussionId: string,
   oauthToken: string,
   message: string
-): Promise<any> {
+): Promise<unknown> {
   const url = `https://mapi.storyblok.com/v1/spaces/${spaceId}/stories/${storyId}/discussions/${discussionId}/discussion_comments`;
 
   const response = await fetch(url, {

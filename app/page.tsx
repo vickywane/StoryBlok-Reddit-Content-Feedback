@@ -1,5 +1,4 @@
- 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -11,7 +10,7 @@ export default function Page() {
               StoryBlok Reddit Content Feedback
             </h1>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              A Storyblok tool plugin that delivers AI-powered content feedback, 
+              A Storyblok tool plugin that delivers AI-powered content feedback,
               enriched with insights drawn from Reddit discussions.
             </p>
           </div>
@@ -23,10 +22,11 @@ export default function Page() {
                   Why Reddit Insights?
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
-                  Content editors often turn to Reddit discussions to gain authentic insights 
-                  into industry challenges, user pain points, and product experiences. Our AI 
-                  aggregates these conversations to extract actionable insights like SEO keywords, 
-                  emerging trends, and sentiment analysis.
+                  Content editors often turn to Reddit discussions to gain
+                  authentic insights into industry challenges, user pain points,
+                  and product experiences. Our AI aggregates these conversations
+                  to extract actionable insights like SEO keywords, emerging
+                  trends, and sentiment analysis.
                 </p>
               </div>
               <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
@@ -43,25 +43,48 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link 
+            <Link
               href="/dashboard"
               className="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
             >
               Open Dashboard
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="ml-2 w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
-            <div className="text-sm text-gray-500">
-              Built for the{' '}
-              <a 
-                href="https://storyblok-code-coffee.devpost.com/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-indigo-600 hover:text-indigo-800 underline"
-              >
-                Storyblok x Code and Coffee Hackathon 2025
-              </a>
+            <div className="flex flex-col gap-2" >
+              <div className="text-sm text-gray-500">
+                Built for the{" "}
+                <a
+                  href="https://storyblok-code-coffee.devpost.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  Storyblok x Code and Coffee Hackathon 2025
+                </a>
+              </div>
+              <div className="text-sm text-gray-500">
+                View MVP source code on {" "}
+                <a
+                  href="https://storyblok-code-coffee.devpost.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  GitHub Repository
+                </a>
+              </div>
             </div>
           </div>
         </div>

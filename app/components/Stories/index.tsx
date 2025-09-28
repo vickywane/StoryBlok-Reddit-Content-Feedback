@@ -13,7 +13,7 @@ const Index = () => {
     setCurrentStep,
   } = useConfigStore();
 
-  const [stories, setStories] = useState<any[]>([]);
+  const [stories, setStories] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [storiesLoading, setStoriesLoading] = useState(false);
   const [selectedStory, setSelectedStory] = useState("");
 

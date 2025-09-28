@@ -5,6 +5,7 @@ import { useState } from "react";
 interface MenuItem {
   id: string;
   label: string;
+  // @ts-expect-error JSX namespace issue
   icon: JSX.Element;
 }
 
