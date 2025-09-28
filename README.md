@@ -4,7 +4,7 @@
 
 ## Inspiration 
 
-> This project is currently being built during the (Storyblok x Code and Coffee Hackathon 2025)[https://storyblok-code-coffee.devpost.com/] event.
+> This project is currently being built during the [Storyblok x Code and Coffee Hackathon 2025](https://storyblok-code-coffee.devpost.com/) event.
 
 While working with content editors, I’ve observed that they often turn to Reddit discussions to gain authentic insights into industry challenges, user pain points, and product experiences. Conversational AI models can play a valuable role here by aggregating large volumes of discussions and analyzing them to extract actionable insights such as SEO keywords, emerging trends, and sentiment.
 
