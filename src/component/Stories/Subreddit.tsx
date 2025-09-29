@@ -1,6 +1,6 @@
 import { useConfigStore } from "../../store/configStore";
 import { useEffect, useState } from "react";
-import { AiOutlineDelete, AiOutlinePlus, AiOutlineDown, AiOutlineUp } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 
 export const Subreddit = () => {
   const {
@@ -12,11 +12,9 @@ export const Subreddit = () => {
     storyId,
     removeSuggestion,
     addSuggestion,
-    plainStory,
   } = useConfigStore();
 
   const [newSubreddit, setNewSubreddit] = useState("");
-  const [isStoryExpanded, setIsStoryExpanded] = useState(false);
 
   useEffect(() => {
     if (credentialsConfig && storyId) {
@@ -106,30 +104,6 @@ export const Subreddit = () => {
           </button>
         </div>
       </div>
-
-      {/* Story Content Collapsible */}
-      {plainStory && (
-        <div className="mb-6 border border-gray-200 rounded-lg">
-          <button
-            onClick={() => setIsStoryExpanded(!isStoryExpanded)}
-            className="w-full px-4 py-3 text-left bg-gray-50 hover:bg-gray-100 rounded-t-lg flex items-center justify-between transition-colors"
-          >
-            <h3 className="text-sm font-medium text-gray-700">Story Content</h3>
-            {isStoryExpanded ? (
-              <AiOutlineUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <AiOutlineDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-          {isStoryExpanded && (
-            <div className="p-4 bg-white rounded-b-lg">
-              <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-                {plainStory}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {redditSuggestions.length > 0 ? (
         <div className="space-y-3">
